@@ -23,7 +23,7 @@ export default function HakkimizdaPage() {
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Hakkımızda</h1>
           <p className="text-sm text-slate-600">
-            Borusan Otomotiv Grubu&apos;nun çoklu marka ve kanal stratejisi vizyonuyla hayata geçirilen Emirgan Motors A.Ş.
+            Borusan Otomotiv Grubu&apos;nun çoklu marka ve kanal stratejisi vizyonuyla hayata geçirilen Otosipsak A.Ş.
           </p>
         </div>
 
@@ -45,23 +45,23 @@ export default function HakkimizdaPage() {
 
           <article className="prose prose-slate max-w-none">
             <p>
-              Borusan Otomotiv Grubu&apos;nun çoklu marka ve kanal stratejisi vizyonuyla hayata geçirilmiş olan Emirgan Motors A.Ş.;
+              Borusan Otomotiv Grubu&apos;nun çoklu marka ve kanal stratejisi vizyonuyla hayata geçirilmiş olan Otosipsak A.Ş.;
               kendi lokasyonlarında güven, hız ve müşteri deneyimi odaklı bir anlayışla belirlenen kriterlere uygun
               her marka, model ve yaştaki ikinci el otomobil için; nakit alım, takas, satış ve servis hizmetlerinin yanı
               sıra iş ortakları aracılığıyla finansman ve sigorta çözümleri sunar.
             </p>
             <p>
               Müşterilerine hızlı, güvenilir ve etkileşimli bir alışveriş deneyimi sunarak müşteri memnuniyetini en üst
-              düzeye çıkarmayı amaçlayan Emirgan Motors A.Ş., iletişim merkezi ile haftanın 7 günü boyunca, 08.00-18.00
+              düzeye çıkarmayı amaçlayan Otosipsak A.Ş., iletişim merkezi ile haftanın 7 günü boyunca, 08.00-18.00
               saatleri arasında kesintisiz hizmet verir.
             </p>
             <p>
-              Nakit alım, takas ve satış hizmetlerinin yanı sıra Emirgan Motors A.Ş. Servis ile İstanbul&apos;da Kağıthane ve
+              Nakit alım, takas ve satış hizmetlerinin yanı sıra Otosipsak A.Ş. Servis ile İstanbul&apos;da Kağıthane ve
               Ankara&apos;da Balgat lokasyonlarında her marka ve model otomobil için Borusan güvencesi ve avantajlı
               fiyatlarla bakım, onarım ve arıza tespit hizmetleri sunar.
             </p>
             <p>
-              2.el araba arayanlar için güvenilir adres olmaya devam eden Emirgan Motors A.Ş., aynı zamanda tamamen ekspertizli
+              2.el araba arayanlar için güvenilir adres olmaya devam eden Otosipsak A.Ş., aynı zamanda tamamen ekspertizli
               2. el motosikletleri de İstanbul’da Kağıthane’de ve Ankara’da Balgat lokasyonlarında sergiler.
             </p>
           </article>

@@ -26,7 +26,7 @@ export default function Header() {
         <Link href="/" className="flex items-center" onClick={closeMenu}>
           <Image
             src="/images/emirganLogo.png"
-            alt="Emirgan Motors A.Ş."
+            alt="Otosipsak A.Ş."
             width={140}
             height={40}
             className="h-10 w-auto"

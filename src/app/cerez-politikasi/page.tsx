@@ -23,7 +23,7 @@ export default function CerezPolitikasiPage() {
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Çerez Politikası</h1>
           <p className="text-sm text-slate-600">
-            Emirgan Motors A.Ş. sitesinde kullanılan çerezlere ve gizlilik uygulamalarına dair bilgilendirme.
+            Otosipsak A.Ş. sitesinde kullanılan çerezlere ve gizlilik uygulamalarına dair bilgilendirme.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export default function CerezPolitikasiPage() {
           <article className="prose prose-slate max-w-none rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2>1. Amaç</h2>
             <p>
-              Bu Çerez Politikası, Emirgan Motors A.Ş. web sitesinde kullanılan çerezlerin türleri, kullanım amaçları ve
+              Bu Çerez Politikası, Otosipsak A.Ş. web sitesinde kullanılan çerezlerin türleri, kullanım amaçları ve
               kullanıcıların çerez tercihlerini nasıl yönetebilecekleri hakkında bilgi vermek için hazırlanmıştır.
               Çerezler; site deneyimini iyileştirmek, performansı artırmak, ziyaretçi istatistiklerini izlemek ve
               tercihlerinizin hatırlanmasını sağlamak için kullanılır.

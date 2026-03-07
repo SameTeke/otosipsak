@@ -64,7 +64,7 @@ export default function Footer() {
         <div className="mt-10 border-t border-slate-800 pt-8 text-sm text-gray-300">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-base font-semibold text-white">Emirgan Motors A.Ş.</div>
+              <div className="text-base font-semibold text-white">Otosipsak A.Ş.</div>
               <p className="mt-1 text-gray-400">
                 Copyright © 2025 — Tüm hakları saklıdır.
               </p>

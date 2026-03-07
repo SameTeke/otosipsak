@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Emirgan Motors A.Ş.',
-  description: 'Emirgan Motors A.Ş. — Hızlı, şeffaf ve güvenli satış süreci.'
+  title: 'Otosipsak A.Ş.',
+  description: 'Otosipsak A.Ş. — Hızlı, şeffaf ve güvenli satış süreci.'
 };
 
 export const viewport = {

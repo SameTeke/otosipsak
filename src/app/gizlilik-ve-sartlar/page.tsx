@@ -57,7 +57,7 @@ export default function GizlilikVeSartlarPage() {
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Gizlilik ve Şartlar</h1>
           <p className="text-sm text-slate-600">
-            Emirgan Motors A.Ş.&apos;te sunulan gizlilik ve kullanım koşullarına ait düzenlemeler aşağıda yer alır.
+            Otosipsak A.Ş.&apos;te sunulan gizlilik ve kullanım koşullarına ait düzenlemeler aşağıda yer alır.
           </p>
         </div>
 

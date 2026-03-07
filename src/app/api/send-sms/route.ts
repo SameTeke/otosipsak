@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       }
     });
 
-    const message = `Emirgan Motors doğrulama kodunuz: ${code}. Kod 5 dakika geçerlidir.`;
+    const message = `Otosipsak doğrulama kodunuz: ${code}. Kod 5 dakika geçerlidir.`;
     await sendSms(phone, message);
 
     return NextResponse.json({

@@ -45,7 +45,7 @@ export default function HomePage() {
     { title: 'Ekspertiz ve Değerleme', desc: '30+ kontrol noktasında inceleme, adil ve şeffaf teklif.' },
     { title: 'Takas Kolaylığı', desc: 'Mevcut aracınızı verin, yenisini seçin; farkı anında hesaplayın.' },
     { title: 'Finansman ve Sigorta', desc: 'İş ortaklarımızla uygun kredi ve sigorta çözümleri.' },
-    { title: 'Servis ve Bakım', desc: 'Emirgan Motors A.Ş. güvencesiyle bakım, onarım ve arıza tespit hizmetleri.' },
+    { title: 'Servis ve Bakım', desc: 'Otosipsak A.Ş. güvencesiyle bakım, onarım ve arıza tespit hizmetleri.' },
     { title: '7/24 Destek', desc: 'Çağrı merkezi desteği, hızlı randevu ve bilgi paylaşımı.' },
     { title: 'Güvenli Evrak Süreçleri', desc: 'Noter ve teslimat işlemlerinde uçtan uca danışmanlık.' }
   ]);
