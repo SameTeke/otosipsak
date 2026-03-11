@@ -25,10 +25,10 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center" onClick={closeMenu}>
           <Image
-            src="/images/emirganLogo.png"
+            src="/images/oto-sipsak-wordmark-light.svg"
             alt="Otosipsak A.Ş."
-            width={140}
-            height={40}
+            width={180}
+            height={60}
             className="h-10 w-auto"
             priority
           />
