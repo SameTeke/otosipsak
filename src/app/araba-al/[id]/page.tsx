@@ -202,7 +202,11 @@ export default function ListingDetailPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100">
                 <img
-                  src={data.images?.[activeImage]?.url ?? data.images?.[0]?.url ?? '/images/banner.jpg'}
+                  src={
+                    data.images?.[activeImage]?.url ??
+                    data.images?.[0]?.url ??
+                    '/images/otosipsak-hero-banner-araba-degerleme.webp'
+                  }
                   alt={`${data.brand} ${data.model}`}
                   className="h-full w-full object-cover"
                 />

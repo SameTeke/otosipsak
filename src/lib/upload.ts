@@ -35,6 +35,11 @@ export async function saveUploadFiles(files: File[]): Promise<SavedFile[]> {
     return saved;
   }
 
+  // Vercel production ortaminda local dosya sistemi kalici degildir.
+  if (process.env.VERCEL) {
+    throw new Error('BLOB_READ_WRITE_TOKEN eksik. Uretimde gorsel yuklemek icin Vercel Blob token gerekli.');
+  }
+
   // Local: FS
   ensureUploadDir();
   for (const file of files) {

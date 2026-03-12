@@ -109,6 +109,21 @@ export default function AdminListingsPage() {
     load();
   }, []);
 
+  const selectedImagePreviews = useMemo(
+    () =>
+      form.imageFiles.map((file) => ({
+        name: file.name,
+        url: URL.createObjectURL(file)
+      })),
+    [form.imageFiles]
+  );
+
+  useEffect(() => {
+    return () => {
+      selectedImagePreviews.forEach((item) => URL.revokeObjectURL(item.url));
+    };
+  }, [selectedImagePreviews]);
+
   const resetAll = () => {
     setForm(emptyForm);
     setError(null);
@@ -197,7 +212,15 @@ export default function AdminListingsPage() {
     if (form.imageFiles.length && id) {
       const fd = new FormData();
       form.imageFiles.forEach((f) => fd.append('files', f));
-      await fetch(`/api/admin/listings/${id}/images`, { method: 'POST', body: fd });
+      const uploadRes = await fetch(`/api/admin/listings/${id}/images`, { method: 'POST', body: fd });
+      if (!uploadRes.ok) {
+        const uploadData = await uploadRes.json().catch(() => ({}));
+        setError(uploadData.error || 'Ilan kaydedildi fakat gorseller yuklenemedi.');
+        await load();
+        setSaving(false);
+        setForm((prev) => ({ ...prev, id, imageFiles: [] }));
+        return;
+      }
     }
 
     resetAll();
@@ -580,6 +603,18 @@ export default function AdminListingsPage() {
                 />
                 <p className="text-xs text-slate-500">Kaydet’e bastıktan sonra yeni görseller yüklenir.</p>
               </div>
+              {selectedImagePreviews.length ? (
+                <div>
+                  <p className="mb-2 text-xs font-semibold text-slate-700">Kaydedilecek yeni görseller</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedImagePreviews.map((img) => (
+                      <div key={img.url} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                        <img src={img.url} alt={img.name} className="h-20 w-28 object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               {form.existingImages.length ? (
                 <div className="flex flex-wrap gap-2">
                   {form.existingImages.map((img) => (

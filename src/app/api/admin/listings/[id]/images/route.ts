@@ -5,16 +5,25 @@ import { saveUploadFiles } from '@/lib/upload';
 type Params = { params: { id: string } };
 
 export async function POST(req: Request, { params }: Params) {
-  const listingId = Number(params.id);
-  const form = await req.formData();
-  const files = form.getAll('files') as File[];
-  if (!files.length) return NextResponse.json({ ok: true });
+  try {
+    const listingId = Number(params.id);
+    if (!Number.isFinite(listingId)) {
+      return NextResponse.json({ error: 'Gecersiz ilan numarasi' }, { status: 400 });
+    }
 
-  const saved = await saveUploadFiles(files);
-  await prisma.listingImage.createMany({
-    data: saved.map((s) => ({ url: s.url, listingId }))
-  });
+    const form = await req.formData();
+    const files = form.getAll('files') as File[];
+    if (!files.length) return NextResponse.json({ ok: true, files: [] });
 
-  return NextResponse.json({ ok: true, files: saved });
+    const saved = await saveUploadFiles(files);
+    await prisma.listingImage.createMany({
+      data: saved.map((s) => ({ url: s.url, listingId }))
+    });
+
+    return NextResponse.json({ ok: true, files: saved });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Gorseller yuklenemedi';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 

@@ -734,7 +734,7 @@ function ArabaAlInner() {
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
                     <img
-                      src={car.images[0]?.url ?? '/images/banner.jpg'}
+                      src={car.images[0]?.url ?? '/images/otosipsak-hero-banner-araba-degerleme.webp'}
                       alt={`${car.brand} ${car.model}`}
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
