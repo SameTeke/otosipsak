@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
-  <rect width="1024" height="1024" fill="#0f172a"/>
-  <rect x="96" y="96" width="832" height="832" rx="220" fill="#111b31" stroke="#23314f" stroke-width="6"/>
-  <rect x="166" y="166" width="120" height="28" rx="14" fill="#fe3d56"/>
-  <rect x="738" y="826" width="120" height="28" rx="14" fill="#d97706"/>
-  <text x="512" y="610" text-anchor="middle" font-family="Noto Sans, Arial, Helvetica, sans-serif" font-size="520" font-weight="900" fill="#ffffff">Ş</text>
-</svg>

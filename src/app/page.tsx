@@ -260,7 +260,7 @@ export default function HomePage() {
       {/* Hero */}
       <section
         className="relative isolate overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/banner1.png')" }}
+        style={{ backgroundImage: "url('/images/otosipsak-hero-banner-araba-degerleme.webp')" }}
       >
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative mx-auto grid min-h-[650px] max-w-6xl items-center px-4 py-16 sm:px-8 lg:px-12 lg:grid-cols-5 lg:gap-10">

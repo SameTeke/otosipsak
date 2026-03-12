@@ -7,9 +7,12 @@ export const metadata: Metadata = {
   title: 'Otosipsak A.Ş.',
   description: 'Otosipsak A.Ş. — Hızlı, şeffaf ve güvenli satış süreci.',
   icons: {
-    icon: '/images/oto-sipsak-icon-light.png',
-    shortcut: '/images/oto-sipsak-icon-light.png',
-    apple: '/images/oto-sipsak-icon-light.png'
+    icon: [
+      { url: '/images/otosipsak-favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/otosipsak-favicon-64.png', sizes: '64x64', type: 'image/png' }
+    ],
+    shortcut: '/images/otosipsak-favicon-32.png',
+    apple: '/images/otosipsak-apple-touch-icon.png'
   }
 };
 
