@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Listing, ListingStatus } from '@prisma/client';
+import { validateImageFiles } from '@/lib/client-image-validation';
+import { IMAGE_UPLOAD_REQUIREMENTS_TEXT, IMAGE_UPLOAD_RULES } from '@/lib/image-upload-rules';
 
 type ListingWithImages = Listing & { images: { id: number; url: string }[] };
 
@@ -598,10 +600,29 @@ export default function AdminListingsPage() {
                   type="file"
                   multiple
                   accept="image/*"
-                  onChange={(e) => setForm({ ...form, imageFiles: Array.from(e.target.files || []) })}
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (!files.length) {
+                      setForm({ ...form, imageFiles: [] });
+                      return;
+                    }
+
+                    const validationError = await validateImageFiles(files, {
+                      maxFiles: IMAGE_UPLOAD_RULES.maxVehiclePhotos
+                    });
+
+                    if (validationError) {
+                      setError(validationError);
+                      e.currentTarget.value = '';
+                      return;
+                    }
+
+                    setError(null);
+                    setForm({ ...form, imageFiles: files });
+                  }}
                   className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
-                <p className="text-xs text-slate-500">Kaydet’e bastıktan sonra yeni görseller yüklenir.</p>
+                <p className="text-xs text-slate-500">{IMAGE_UPLOAD_REQUIREMENTS_TEXT}</p>
               </div>
               {selectedImagePreviews.length ? (
                 <div>

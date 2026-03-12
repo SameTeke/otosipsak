@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
+import { validateImageFiles } from '@/lib/client-image-validation';
+import { IMAGE_UPLOAD_REQUIREMENTS_TEXT } from '@/lib/image-upload-rules';
 
 type BlogStatus = 'draft' | 'published';
 
@@ -47,13 +49,20 @@ function slugifyTR(input: string) {
     .replace(/-+/g, '-');
 }
 
-async function uploadSingle(file: File): Promise<string | null> {
+async function uploadSingle(file: File): Promise<string> {
+  const validationError = await validateImageFiles([file], { maxFiles: 1 });
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const fd = new FormData();
   fd.append('file', file);
   const res = await fetch('/api/upload', { method: 'POST', body: fd });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.files?.[0]?.url ?? null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || 'Gorsel yuklenemedi.');
+  }
+  return data.files?.[0]?.url ?? '';
 }
 
 export default function AdminBlogPage() {
@@ -398,7 +407,7 @@ export default function AdminBlogPage() {
             <div className="space-y-4">
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <div className="text-sm font-semibold text-slate-900">Küçük Resim</div>
-                <p className="mt-1 text-xs text-slate-500">Blog listesinde gösterilir.</p>
+                <p className="mt-1 text-xs text-slate-500">Blog listesinde gösterilir. {IMAGE_UPLOAD_REQUIREMENTS_TEXT}</p>
                 {form.thumbnailUrl ? (
                   <img src={form.thumbnailUrl} alt="" className="mt-3 h-28 w-full rounded-xl border object-cover" />
                 ) : null}
@@ -415,8 +424,15 @@ export default function AdminBlogPage() {
                     onChange={async (e) => {
                       const f = e.target.files?.[0];
                       if (!f) return;
-                      const url = await uploadSingle(f);
-                      if (url) setForm((p) => ({ ...p, thumbnailUrl: url }));
+                      try {
+                        const url = await uploadSingle(f);
+                        if (url) {
+                          setError(null);
+                          setForm((p) => ({ ...p, thumbnailUrl: url }));
+                        }
+                      } catch (err) {
+                        setError(err instanceof Error ? err.message : 'Gorsel yuklenemedi.');
+                      }
                     }}
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm"
                   />
@@ -425,7 +441,7 @@ export default function AdminBlogPage() {
 
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <div className="text-sm font-semibold text-slate-900">Blog Görseli (Kapak)</div>
-                <p className="mt-1 text-xs text-slate-500">Blog detay sayfasında üstte gösterilir.</p>
+                <p className="mt-1 text-xs text-slate-500">Blog detay sayfasında üstte gösterilir. {IMAGE_UPLOAD_REQUIREMENTS_TEXT}</p>
                 {form.heroImageUrl ? (
                   <img src={form.heroImageUrl} alt="" className="mt-3 h-36 w-full rounded-xl border object-cover" />
                 ) : null}
@@ -442,8 +458,15 @@ export default function AdminBlogPage() {
                     onChange={async (e) => {
                       const f = e.target.files?.[0];
                       if (!f) return;
-                      const url = await uploadSingle(f);
-                      if (url) setForm((p) => ({ ...p, heroImageUrl: url }));
+                      try {
+                        const url = await uploadSingle(f);
+                        if (url) {
+                          setError(null);
+                          setForm((p) => ({ ...p, heroImageUrl: url }));
+                        }
+                      } catch (err) {
+                        setError(err instanceof Error ? err.message : 'Gorsel yuklenemedi.');
+                      }
                     }}
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm"
                   />

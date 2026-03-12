@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { validateImageFiles } from '@/lib/client-image-validation';
+import { IMAGE_UPLOAD_REQUIREMENTS_TEXT } from '@/lib/image-upload-rules';
 
 type MediaItem = { url: string };
 
@@ -38,7 +40,29 @@ export default function MediaPage() {
         <p className="text-sm text-slate-600">Görseller /uploads içine kaydedilir</p>
       </div>
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
-        <input type="file" multiple accept="image/*" onChange={(e) => setFiles(Array.from(e.target.files || []))} />
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={async (e) => {
+            const nextFiles = Array.from(e.target.files || []);
+            if (!nextFiles.length) {
+              setFiles([]);
+              return;
+            }
+
+            const validationError = await validateImageFiles(nextFiles);
+            if (validationError) {
+              setMsg(validationError);
+              e.currentTarget.value = '';
+              return;
+            }
+
+            setMsg(null);
+            setFiles(nextFiles);
+          }}
+        />
+        <p className="text-xs text-slate-500">{IMAGE_UPLOAD_REQUIREMENTS_TEXT}</p>
         <button
           type="button"
           onClick={upload}

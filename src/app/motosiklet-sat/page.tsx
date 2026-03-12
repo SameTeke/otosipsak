@@ -8,6 +8,8 @@ import Footer from '@/components/layout/Footer';
 import { motoYears } from '@/data/motos/brands';
 import { getMotoBrandsByYear } from '@/data/motos/getMotoBrandsByYear';
 import { getMotoModelsByBrand } from '@/data/motos/getMotoModelsByBrand';
+import { validateImageFiles } from '@/lib/client-image-validation';
+import { IMAGE_UPLOAD_REQUIREMENTS_TEXT, IMAGE_UPLOAD_RULES } from '@/lib/image-upload-rules';
 
 type FormState = {
   year: string;
@@ -94,9 +96,20 @@ function MotosikletSatInner() {
     }));
   };
 
-  const handlePhotosChange = (files: FileList | null) => {
+  const handlePhotosChange = async (files: FileList | null) => {
     if (!files) return;
     const incoming = Array.from(files);
+    const validationError = await validateImageFiles(incoming, {
+      maxFiles: IMAGE_UPLOAD_RULES.maxVehiclePhotos,
+      currentCount: form.photos.length
+    });
+
+    if (validationError) {
+      setErrors((prev) => ({ ...prev, photos: validationError }));
+      return;
+    }
+
+    setErrors((prev) => ({ ...prev, photos: undefined }));
     setForm((prev) => {
       const next = [...prev.photos, ...incoming].slice(0, 6);
       return { ...prev, photos: next };
@@ -165,11 +178,16 @@ function MotosikletSatInner() {
   const uploadPhotos = async () => {
     if (!form.photos.length) return [];
     setUploading(true);
+    setErrors((prev) => ({ ...prev, photos: undefined }));
     const fd = new FormData();
     form.photos.forEach((f) => fd.append('file', f));
     const res = await fetch('/api/upload', { method: 'POST', body: fd });
     setUploading(false);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setErrors((prev) => ({ ...prev, photos: data.error || 'Fotograflar yuklenemedi.' }));
+      return [];
+    }
     const data = await res.json();
     return data.files?.map((f: any) => f.url) ?? [];
   };
@@ -356,6 +374,8 @@ function MotosikletSatInner() {
                         <div className="text-xs text-slate-600">
                           Maksimum 6 fotoğraf ekleyebilirsiniz. İlk fotoğraf kapak olur.
                         </div>
+                        <div className="text-xs text-slate-500">{IMAGE_UPLOAD_REQUIREMENTS_TEXT}</div>
+                        {errors.photos ? <p className="text-xs text-red-600">{errors.photos}</p> : null}
                         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                           {previewUrls.map((url, idx) => (
                             <div
