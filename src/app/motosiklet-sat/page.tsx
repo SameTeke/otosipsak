@@ -51,6 +51,13 @@ const initialState: FormState = {
 
 const cities = ['34 İstanbul', '06 Ankara', '35 İzmir', '16 Bursa', '41 Kocaeli'];
 
+function moveItem<T>(items: T[], fromIndex: number, toIndex: number) {
+  const next = [...items];
+  const [moved] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, moved);
+  return next;
+}
+
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 12); // +90 ile birlikte 12 hane
   const padded = digits.startsWith('90') ? digits : `90${digits}`;
@@ -76,6 +83,7 @@ function MotosikletSatInner() {
   const [submitted, setSubmitted] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [draggedPhotoIndex, setDraggedPhotoIndex] = useState<number | null>(null);
   const searchParams = useSearchParams();
 
   const brandOptions = useMemo(
@@ -120,6 +128,14 @@ function MotosikletSatInner() {
     setForm((prev) => ({
       ...prev,
       photos: prev.photos.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleMovePhoto = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+    setForm((prev) => ({
+      ...prev,
+      photos: moveItem(prev.photos, fromIndex, toIndex)
     }));
   };
 
@@ -374,13 +390,25 @@ function MotosikletSatInner() {
                         <div className="text-xs text-slate-600">
                           Maksimum 6 fotoğraf ekleyebilirsiniz. İlk fotoğraf kapak olur.
                         </div>
+                        <div className="text-xs text-slate-500">Fotoğrafları sürükleyip bırakarak sıralayabilirsiniz.</div>
                         <div className="text-xs text-slate-500">{IMAGE_UPLOAD_REQUIREMENTS_TEXT}</div>
                         {errors.photos ? <p className="text-xs text-red-600">{errors.photos}</p> : null}
                         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                           {previewUrls.map((url, idx) => (
                             <div
                               key={url}
-                              className="relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
+                              draggable
+                              onDragStart={() => setDraggedPhotoIndex(idx)}
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={() => {
+                                if (draggedPhotoIndex === null) return;
+                                handleMovePhoto(draggedPhotoIndex, idx);
+                                setDraggedPhotoIndex(null);
+                              }}
+                              onDragEnd={() => setDraggedPhotoIndex(null)}
+                              className={`relative aspect-square overflow-hidden rounded-xl border bg-slate-100 ${
+                                draggedPhotoIndex === idx ? 'border-primary ring-2 ring-primary/30' : 'border-slate-200'
+                              }`}
                             >
                               <img src={url} alt={`Foto ${idx + 1}`} className="h-full w-full object-cover" />
                               <button

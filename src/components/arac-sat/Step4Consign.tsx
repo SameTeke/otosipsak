@@ -1,4 +1,5 @@
 import Step4, { Step4Errors, Step4State } from './Step4';
+import { formatTurkishPlateInput } from '@/lib/plate';
 
 type Props = {
   value: Step4State;
@@ -30,8 +31,15 @@ export default function Step4Consign(props: Props) {
               <input
                 type={field.type}
                 value={props.value[field.key as keyof Step4State] as string}
-                onChange={(e) => props.onChange(field.key as keyof Step4State, e.target.value)}
+                onChange={(e) =>
+                  props.onChange(
+                    field.key as keyof Step4State,
+                    field.key === 'plate' ? formatTurkishPlateInput(e.target.value) : e.target.value
+                  )
+                }
                 placeholder={field.placeholder}
+                maxLength={field.key === 'plate' ? 11 : undefined}
+                autoCapitalize={field.key === 'plate' ? 'characters' : undefined}
                 className="w-full rounded-lg border border-slate-200 px-3 py-3 text-sm font-semibold text-slate-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
               {props.errors[field.key as keyof Step4Errors] ? (

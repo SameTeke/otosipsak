@@ -11,6 +11,7 @@ import Step4Consign from '@/components/arac-sat/Step4Consign';
 import Step5, { Step5Errors, Step5State } from '@/components/arac-sat/Step5';
 import { getBrandsByYear } from '@/data/cars/getBrandsByYear';
 import { getModelsByBrand } from '@/data/cars/getModelsByBrand';
+import { formatTurkishPlateInput, isValidTurkishPlate } from '@/lib/plate';
 
 const years = Array.from({ length: 21 }, (_, i) => String(2005 + i));
 const bodyTypes = ['Sedan', 'Hatchback', 'SUV', 'Coupé', 'Station Wagon', 'MPV', 'Pickup'];
@@ -134,7 +135,10 @@ function KonsinyeBirakInner() {
   };
 
   const handleStep4Change = (field: keyof Step4State, value: string) => {
-    setStep4((prev) => ({ ...prev, [field]: value }));
+    setStep4((prev) => ({
+      ...prev,
+      [field]: field === 'plate' ? formatTurkishPlateInput(value) : value
+    }));
   };
   const handleStep5Change = (field: keyof Step5State, value: string) => {
     setStep5((prev) => ({ ...prev, [field]: value }));
@@ -202,10 +206,8 @@ function KonsinyeBirakInner() {
       errs.consignPeriod = 'Süre en az 14 gün olmalı';
     }
 
-    const plate = (step4.plate || '').toUpperCase().replace(/\s+/g, ' ');
-    const plateRegex =
-      /^(?:\d{2}\s?[A-ZÇĞİÖŞÜ]{1}\s?\d{4}|\d{2}\s?[A-ZÇĞİÖŞÜ]{2}\s?\d{3,4}|\d{2}\s?[A-ZÇĞİÖŞÜ]{3}\s?\d{2})$/;
-    if (!plate || !plateRegex.test(plate)) {
+    const plate = formatTurkishPlateInput(step4.plate || '');
+    if (!plate || !isValidTurkishPlate(plate)) {
       errs.plate = 'Geçerli bir plaka giriniz (örn: 34 ABC 123)';
     }
 

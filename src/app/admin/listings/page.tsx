@@ -7,6 +7,13 @@ import { IMAGE_UPLOAD_REQUIREMENTS_TEXT, IMAGE_UPLOAD_RULES } from '@/lib/image-
 
 type ListingWithImages = Listing & { images: { id: number; url: string }[] };
 
+function moveItem<T>(items: T[], fromIndex: number, toIndex: number) {
+  const next = [...items];
+  const [moved] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, moved);
+  return next;
+}
+
 const brandOptions = ['BMW', 'Audi', 'Mercedes', 'Toyota', 'Volkswagen', 'Volvo', 'Renault', 'Peugeot', 'Hyundai', 'Kia'];
 const modelOptions: Record<string, string[]> = {
   BMW: ['3 Serisi', '5 Serisi', 'X3', 'X5'],
@@ -94,6 +101,7 @@ export default function AdminListingsPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
 
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'published'>('all');
@@ -623,14 +631,37 @@ export default function AdminListingsPage() {
                   className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <p className="text-xs text-slate-500">{IMAGE_UPLOAD_REQUIREMENTS_TEXT}</p>
+                <p className="text-xs text-slate-500">Yeni yükleyeceğiniz görselleri sürükleyip bırakarak sıralayabilirsiniz. İlk görsel kapak olur.</p>
               </div>
               {selectedImagePreviews.length ? (
                 <div>
                   <p className="mb-2 text-xs font-semibold text-slate-700">Kaydedilecek yeni görseller</p>
                   <div className="flex flex-wrap gap-2">
-                    {selectedImagePreviews.map((img) => (
-                      <div key={img.url} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    {selectedImagePreviews.map((img, idx) => (
+                      <div
+                        key={img.url}
+                        draggable
+                        onDragStart={() => setDraggedImageIndex(idx)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={() => {
+                          if (draggedImageIndex === null) return;
+                          setForm((prev) => ({
+                            ...prev,
+                            imageFiles: moveItem(prev.imageFiles, draggedImageIndex, idx)
+                          }));
+                          setDraggedImageIndex(null);
+                        }}
+                        onDragEnd={() => setDraggedImageIndex(null)}
+                        className={`overflow-hidden rounded-xl border bg-white ${
+                          draggedImageIndex === idx ? 'border-primary ring-2 ring-primary/30' : 'border-slate-200'
+                        }`}
+                      >
                         <img src={img.url} alt={img.name} className="h-20 w-28 object-cover" />
+                        {idx === 0 ? (
+                          <div className="border-t border-slate-200 px-2 py-1 text-[10px] font-semibold uppercase text-primary">
+                            Kapak
+                          </div>
+                        ) : null}
                       </div>
                     ))}
                   </div>
