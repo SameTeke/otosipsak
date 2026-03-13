@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { formatOfferMail } from '@/lib/mail-format';
 import { getContactToEmail, sendMailWithResend } from '@/lib/mail';
 
 const toEmail = 'sssametcanteke@gmail.com';
@@ -6,10 +7,12 @@ const toEmail = 'sssametcanteke@gmail.com';
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
+    const { text, html } = formatOfferMail(payload);
     await sendMailWithResend({
       to: getContactToEmail(toEmail),
       subject: 'Araç Satış Teklifi',
-      text: JSON.stringify(payload, null, 2)
+      text,
+      html
     });
 
     return NextResponse.json({ success: true });

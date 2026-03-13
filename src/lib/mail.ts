@@ -22,6 +22,7 @@ export async function sendMailWithResend(input: {
   to: string;
   subject: string;
   text: string;
+  html?: string;
   replyTo?: string | null;
 }) {
   const resend = getResendClient();
@@ -31,6 +32,7 @@ export async function sendMailWithResend(input: {
     to: [input.to],
     subject: input.subject,
     text: input.text,
+    html: input.html,
     replyTo: input.replyTo || undefined
   });
 }
