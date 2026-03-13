@@ -47,66 +47,13 @@ const formatPhoneNumber = (digits: string) => {
 };
 
 export default function Step5({ value, errors, onChange, onPrev, onValidate, offerPayload }: Props) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [code, setCode] = useState('');
   const [status, setStatus] = useState<string | null>(null);
-
-  const handleSendSMS = async () => {
-    setIsSending(true);
-    setStatus(null);
-    try {
-      const res = await fetch('/api/send-sms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: value.phone })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStatus('Kod gönderildi');
-        setIsModalOpen(true);
-      } else {
-        setStatus(data.error || 'SMS gönderilemedi');
-      }
-    } catch (err) {
-      setStatus('SMS gönderilemedi');
-    } finally {
-      setIsSending(false);
-    }
-  };
-
-  const handleVerify = async () => {
-    setIsVerifying(true);
-    setStatus(null);
-    try {
-      const res = await fetch('/api/verify-sms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: value.phone, code })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStatus('Doğrulandı, teklif gönderiliyor...');
-        await fetch('/api/send-offer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(offerPayload)
-        });
-        setStatus('Başarılı! Teklif iletildi.');
-        // optionally navigate or show success
-      } else {
-        setStatus(data.error || 'Kod hatalı');
-      }
-    } catch (err) {
-      setStatus('Doğrulama başarısız');
-    } finally {
-      setIsVerifying(false);
-    }
-  };
 
   const handleSubmit = async () => {
     if (!onValidate()) return;
+    setIsSending(true);
+    setStatus(null);
     try {
       const formType =
         (offerPayload as any)?.formType ??
@@ -123,7 +70,25 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
     } catch {
       // ignore in MVP
     }
-    handleSendSMS();
+    try {
+      const offerRes = await fetch('/api/send-offer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(offerPayload)
+      });
+      const offerData = await offerRes.json().catch(() => ({}));
+      if (!offerRes.ok || !offerData?.success) {
+        setStatus(offerData?.error || 'Teklif iletilemedi. Lütfen tekrar deneyin.');
+        setIsSending(false);
+        return;
+      }
+
+      setStatus('Başarılı! Teklif iletildi. En kısa sürede sizinle iletişime geçeceğiz.');
+    } catch {
+      setStatus('Teklif iletilemedi. Lütfen tekrar deneyin.');
+    } finally {
+      setIsSending(false);
+    }
   };
   const cityOptions = [
     '34 İstanbul',
@@ -1019,48 +984,7 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
           {isSending ? 'Gönderiliyor...' : 'Teklif Al'}
         </button>
       </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-slate-900">Telefon Doğrulama</h3>
-            <p className="mt-1 text-sm text-slate-600">
-              SMS ile gönderilen 6 haneli kodu giriniz. (Geliştirme modunda kod sunucu konsolunda)
-            </p>
-            <input
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              maxLength={6}
-              inputMode="numeric"
-              className="mt-4 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
-              placeholder="______"
-            />
-            {status ? <p className="mt-2 text-xs font-medium text-slate-700">{status}</p> : null}
-            <div className="mt-4 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  setCode('');
-                  setStatus(null);
-                }}
-                className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                İptal
-              </button>
-              <button
-                type="button"
-                onClick={handleVerify}
-                className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
-                disabled={isVerifying}
-              >
-                {isVerifying ? 'Doğrulanıyor...' : 'Doğrula'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {status ? <p className="text-sm font-medium text-slate-700">{status}</p> : null}
     </div>
   );
 }
