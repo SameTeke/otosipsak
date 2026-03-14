@@ -70,6 +70,7 @@ export function formatOfferMail(payload: any) {
   const step3 = payload?.step3 ?? {};
   const step4 = payload?.step4 ?? {};
   const step5 = payload?.step5 ?? {};
+  const isConsign = payload?.formType === 'konsinye' || step4.askPrice || step4.minPrice || step4.consignPeriod || step4.plate;
 
   const vehicleSection = renderSection('Araç Bilgileri', [
     line('Yıl', step1.year || '-'),
@@ -104,13 +105,24 @@ export function formatOfferMail(payload: any) {
     line('Ekstra', step4.extra || '-')
   ]);
 
+  const consignSection = isConsign
+    ? renderSection('Konsinye Tercihleri', [
+        line('İstenen Satış Fiyatı', formatNumber(step4.askPrice, ' TL')),
+        line('Minimum Kabul Edilebilir Fiyat', formatNumber(step4.minPrice, ' TL')),
+        line('Konsinye Bırakma Süresi', formatNumber(step4.consignPeriod, ' gün')),
+        line('Plaka', step4.plate || '-')
+      ])
+    : null;
+
   const contactSection = renderSection('İletişim Bilgileri', [
     line('Ad Soyad', step5.fullName || '-'),
     line('Şehir', step5.city || '-'),
     line('Telefon', step5.phone || '-')
   ]);
 
-  const text = ['Yeni Araç Satış Talebi', vehicleSection, kaportaSection, extraSection, contactSection].join('\n\n');
+  const text = ['Yeni Araç Satış Talebi', vehicleSection, kaportaSection, extraSection, consignSection, contactSection]
+    .filter(Boolean)
+    .join('\n\n');
   return { text, html: textToHtml(text) };
 }
 
