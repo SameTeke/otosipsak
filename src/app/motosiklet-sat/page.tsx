@@ -84,6 +84,7 @@ function MotosikletSatInner() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [draggedPhotoIndex, setDraggedPhotoIndex] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const submitLockRef = useRef(false);
   const searchParams = useSearchParams();
 
@@ -211,18 +212,28 @@ function MotosikletSatInner() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitLockRef.current || submitted) return;
+    if (submitLockRef.current) return;
     if (!validate()) return;
     submitLockRef.current = true;
+    setIsSubmitting(true);
     const imageUrls = await uploadPhotos();
-    fetch('/api/forms', {
+    if (form.photos.length && !imageUrls.length) {
+      submitLockRef.current = false;
+      setIsSubmitting(false);
+      return;
+    }
+    await fetch('/api/forms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ formType: 'motosiklet-sat', phone: form.phone, payload: { ...form, imageUrls } })
     }).catch(() => {
       submitLockRef.current = false;
     });
+    setForm(initialState);
+    setErrors({});
     setSubmitted(true);
+    setIsSubmitting(false);
+    submitLockRef.current = false;
   };
 
   return (
@@ -613,10 +624,10 @@ function MotosikletSatInner() {
               </p>
               <button
                 type="submit"
-                disabled={uploading || submitted}
+                disabled={uploading || isSubmitting}
                 className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
               >
-                {uploading ? 'Gönderiliyor...' : submitted ? 'Gönderildi' : 'Teklif Al'}
+                {uploading || isSubmitting ? 'Gönderiliyor...' : 'Teklif Al'}
               </button>
             </div>
 

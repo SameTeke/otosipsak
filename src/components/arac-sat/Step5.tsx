@@ -15,6 +15,7 @@ type Props = {
   onPrev: () => void;
   onValidate: () => boolean;
   offerPayload: any;
+  onSuccess?: () => void;
 };
 
 const formatPhoneNumber = (digits: string) => {
@@ -46,7 +47,7 @@ const formatPhoneNumber = (digits: string) => {
   return out;
 };
 
-export default function Step5({ value, errors, onChange, onPrev, onValidate, offerPayload }: Props) {
+export default function Step5({ value, errors, onChange, onPrev, onValidate, offerPayload, onSuccess }: Props) {
   const [isSending, setIsSending] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -90,6 +91,7 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
 
       setIsSubmitted(true);
       setStatus('Başarılı! Teklif iletildi. En kısa sürede sizinle iletişime geçeceğiz.');
+      onSuccess?.();
     } catch {
       setStatus('Teklif iletilemedi. Lütfen tekrar deneyin.');
       submitLockRef.current = false;
@@ -988,7 +990,7 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
           className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
           disabled={isSending || isSubmitted}
         >
-          {isSending ? 'Gönderiliyor...' : isSubmitted ? 'Gönderildi' : 'Teklif Al'}
+          {isSending ? 'Gönderiliyor...' : isSubmitted ? 'Gönderildi' : offerPayload?.formType === 'konsinye' ? 'Konsinye Bırak' : 'Teklif Al'}
         </button>
       </div>
       {status ? <p className="text-sm font-medium text-slate-700">{status}</p> : null}

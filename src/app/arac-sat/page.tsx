@@ -46,6 +46,36 @@ const initialStep3: Step3State = {
   }, {})
 };
 
+const initialStep1: Step1State = {
+  year: '',
+  brand: '',
+  model: '',
+  bodyType: '',
+  fuelType: '',
+  transmission: '',
+  kilometre: '',
+  tramer: 'yok',
+  tramerValue: '',
+  heavyDamage: 'hayir'
+};
+
+const initialStep4: Step4State = {
+  color: '',
+  equipment: '',
+  isListed: 'yok',
+  listingUrl: '',
+  roofPanoramic: 'yok',
+  roofGlass: 'yok',
+  roofSunroof: 'yok',
+  extra: ''
+};
+
+const initialStep5: Step5State = {
+  fullName: '',
+  city: '',
+  phone: ''
+};
+
 export default function AracSatPage() {
   return (
     <Suspense fallback={<div className="p-6 text-sm text-slate-600">Yükleniyor...</div>}>
@@ -58,35 +88,11 @@ function AracSatInner() {
   const searchParams = useSearchParams();
   const [activeStep, setActiveStep] = useState(1);
 
-  const [step1, setStep1] = useState<Step1State>({
-    year: '',
-    brand: '',
-    model: '',
-    bodyType: '',
-    fuelType: '',
-    transmission: '',
-    kilometre: '',
-    tramer: 'yok',
-    tramerValue: '',
-    heavyDamage: 'hayir'
-  });
+  const [step1, setStep1] = useState<Step1State>(initialStep1);
 
   const [step3, setStep3] = useState<Step3State>(initialStep3);
-  const [step4, setStep4] = useState<Step4State>({
-    color: '',
-    equipment: '',
-    isListed: 'yok',
-    listingUrl: '',
-    roofPanoramic: 'yok',
-    roofGlass: 'yok',
-    roofSunroof: 'yok',
-    extra: ''
-  });
-  const [step5, setStep5] = useState<Step5State>({
-    fullName: '',
-    city: '',
-    phone: ''
-  });
+  const [step4, setStep4] = useState<Step4State>(initialStep4);
+  const [step5, setStep5] = useState<Step5State>(initialStep5);
 
   const [errors1, setErrors1] = useState<Step1Errors>({});
   const [errors3, setErrors3] = useState<Step3Errors>({});
@@ -214,6 +220,18 @@ function AracSatInner() {
     });
   };
 
+  const resetForm = () => {
+    setStep1(initialStep1);
+    setStep3(initialStep3);
+    setStep4(initialStep4);
+    setStep5(initialStep5);
+    setErrors1({});
+    setErrors3({});
+    setErrors4({});
+    setErrors5({});
+    setActiveStep(1);
+  };
+
   return (
     <main className="min-h-screen flex flex-col bg-slate-50 pt-16 sm:pt-20">
       <Header />
@@ -321,6 +339,7 @@ function AracSatInner() {
                 onChange={handleStep5Change}
                 onPrev={() => setActiveStep(3)}
                 onValidate={() => validateStep5()}
+                onSuccess={resetForm}
                 offerPayload={{
                   step1,
                   step3,
