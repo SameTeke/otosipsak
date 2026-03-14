@@ -222,15 +222,19 @@ function MotosikletSatInner() {
       setIsSubmitting(false);
       return;
     }
-    await fetch('/api/forms', {
+    const formsRes = await fetch('/api/forms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ formType: 'motosiklet-sat', phone: form.phone, payload: { ...form, imageUrls } })
     }).catch(() => {
       submitLockRef.current = false;
+      return null;
     });
-    setForm(initialState);
-    setErrors({});
+    if (!formsRes?.ok) {
+      submitLockRef.current = false;
+      setIsSubmitting(false);
+      return;
+    }
     setSubmitted(true);
     setIsSubmitting(false);
     submitLockRef.current = false;
@@ -624,16 +628,34 @@ function MotosikletSatInner() {
               </p>
               <button
                 type="submit"
-                disabled={uploading || isSubmitting}
-                className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+                disabled={uploading || isSubmitting || submitted}
+                className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold shadow-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-90 ${
+                  submitted
+                    ? 'cursor-default border border-green-300 bg-green-50 text-green-700'
+                    : 'bg-primary text-white hover:-translate-y-0.5 hover:shadow-xl'
+                }`}
               >
-                {uploading || isSubmitting ? 'Gönderiliyor...' : 'Teklif Al'}
+                {uploading || isSubmitting ? (
+                  'Gönderiliyor...'
+                ) : submitted ? (
+                  <>
+                    <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Gönderildi
+                  </>
+                ) : (
+                  'Teklif Al'
+                )}
               </button>
             </div>
 
             {submitted && (
-              <div className="rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-800">
-                Talebiniz alındı. Bilgileriniz incelendikten sonra sizinle iletişime geçeceğiz.
+              <div className="flex items-start gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                <svg className="mt-0.5 h-5 w-5 shrink-0 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-medium">Talebiniz alındı. Bilgileriniz incelendikten sonra sizinle iletişime geçeceğiz.</span>
               </div>
             )}
           </form>

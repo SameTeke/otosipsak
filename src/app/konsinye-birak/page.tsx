@@ -236,22 +236,6 @@ function KonsinyeBirakInner() {
     return Object.keys(errs).length === 0;
   };
 
-  const goStep5Next = () => {
-    if (!validateStep5()) return;
-  };
-
-  const resetForm = () => {
-    setStep1(initialStep1);
-    setStep3(initialStep3);
-    setStep4(initialStep4);
-    setStep5(initialStep5);
-    setErrors1({});
-    setErrors3({});
-    setErrors4({});
-    setErrors5({});
-    setActiveStep(1);
-  };
-
   return (
     <main className="min-h-screen flex flex-col bg-slate-50 pt-16 sm:pt-20">
       <Header />
@@ -371,7 +355,6 @@ function KonsinyeBirakInner() {
                 onChange={handleStep5Change}
                 onPrev={() => setActiveStep(3)}
                 onValidate={() => validateStep5()}
-                onSuccess={resetForm}
                 offerPayload={{ formType: 'konsinye', step1, step3, step4, step5 }}
               />
             )}

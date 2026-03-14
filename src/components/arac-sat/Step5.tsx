@@ -15,7 +15,6 @@ type Props = {
   onPrev: () => void;
   onValidate: () => boolean;
   offerPayload: any;
-  onSuccess?: () => void;
 };
 
 const formatPhoneNumber = (digits: string) => {
@@ -47,7 +46,7 @@ const formatPhoneNumber = (digits: string) => {
   return out;
 };
 
-export default function Step5({ value, errors, onChange, onPrev, onValidate, offerPayload, onSuccess }: Props) {
+export default function Step5({ value, errors, onChange, onPrev, onValidate, offerPayload }: Props) {
   const [isSending, setIsSending] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -91,7 +90,6 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
 
       setIsSubmitted(true);
       setStatus('Başarılı! Teklif iletildi. En kısa sürede sizinle iletişime geçeceğiz.');
-      onSuccess?.();
     } catch {
       setStatus('Teklif iletilemedi. Lütfen tekrar deneyin.');
       submitLockRef.current = false;
@@ -980,20 +978,51 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
         <button
           type="button"
           onClick={onPrev}
-          className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          disabled={isSubmitted}
+          className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
         >
           ← Önceki
         </button>
         <button
           type="button"
           onClick={handleSubmit}
-          className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
           disabled={isSending || isSubmitted}
+          className={`inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-90 ${
+            isSubmitted
+              ? 'cursor-default border border-green-300 bg-green-50 text-green-700'
+              : 'bg-primary text-white hover:-translate-y-0.5 hover:shadow'
+          }`}
         >
-          {isSending ? 'Gönderiliyor...' : isSubmitted ? 'Gönderildi' : offerPayload?.formType === 'konsinye' ? 'Konsinye Bırak' : 'Teklif Al'}
+          {isSending ? (
+            'Gönderiliyor...'
+          ) : isSubmitted ? (
+            <>
+              <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Gönderildi
+            </>
+          ) : offerPayload?.formType === 'konsinye' ? (
+            'Konsinye Bırak'
+          ) : (
+            'Teklif Al'
+          )}
         </button>
       </div>
-      {status ? <p className="text-sm font-medium text-slate-700">{status}</p> : null}
+      {status ? (
+        <div
+          className={`flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
+            isSubmitted ? 'border-green-200 bg-green-50 text-green-800' : 'border-amber-200 bg-amber-50 text-amber-800'
+          }`}
+        >
+          {isSubmitted && (
+            <svg className="mt-0.5 h-5 w-5 shrink-0 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          )}
+          <span className="font-medium">{status}</span>
+        </div>
+      ) : null}
     </div>
   );
 }
