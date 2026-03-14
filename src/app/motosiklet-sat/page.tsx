@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useMemo, useState, useEffect } from 'react';
+import React, { Suspense, useMemo, useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
@@ -84,6 +84,7 @@ function MotosikletSatInner() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [draggedPhotoIndex, setDraggedPhotoIndex] = useState<number | null>(null);
+  const submitLockRef = useRef(false);
   const searchParams = useSearchParams();
 
   const brandOptions = useMemo(
@@ -210,13 +211,17 @@ function MotosikletSatInner() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitLockRef.current || submitted) return;
     if (!validate()) return;
+    submitLockRef.current = true;
     const imageUrls = await uploadPhotos();
     fetch('/api/forms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ formType: 'motosiklet-sat', phone: form.phone, payload: { ...form, imageUrls } })
-    }).catch(() => {});
+    }).catch(() => {
+      submitLockRef.current = false;
+    });
     setSubmitted(true);
   };
 
@@ -608,9 +613,10 @@ function MotosikletSatInner() {
               </p>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                disabled={uploading || submitted}
+                className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
               >
-                Teklif Al
+                {uploading ? 'Gönderiliyor...' : submitted ? 'Gönderildi' : 'Teklif Al'}
               </button>
             </div>
 

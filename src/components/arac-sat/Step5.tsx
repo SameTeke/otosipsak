@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export type Step5State = {
   fullName: string;
@@ -48,10 +48,14 @@ const formatPhoneNumber = (digits: string) => {
 
 export default function Step5({ value, errors, onChange, onPrev, onValidate, offerPayload }: Props) {
   const [isSending, setIsSending] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const submitLockRef = useRef(false);
 
   const handleSubmit = async () => {
+    if (submitLockRef.current || isSubmitted) return;
     if (!onValidate()) return;
+    submitLockRef.current = true;
     setIsSending(true);
     setStatus(null);
     try {
@@ -80,12 +84,15 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
       if (!offerRes.ok || !offerData?.success) {
         setStatus(offerData?.error || 'Teklif iletilemedi. Lütfen tekrar deneyin.');
         setIsSending(false);
+        submitLockRef.current = false;
         return;
       }
 
+      setIsSubmitted(true);
       setStatus('Başarılı! Teklif iletildi. En kısa sürede sizinle iletişime geçeceğiz.');
     } catch {
       setStatus('Teklif iletilemedi. Lütfen tekrar deneyin.');
+      submitLockRef.current = false;
     } finally {
       setIsSending(false);
     }
@@ -979,9 +986,9 @@ export default function Step5({ value, errors, onChange, onPrev, onValidate, off
           type="button"
           onClick={handleSubmit}
           className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
-          disabled={isSending}
+          disabled={isSending || isSubmitted}
         >
-          {isSending ? 'Gönderiliyor...' : 'Teklif Al'}
+          {isSending ? 'Gönderiliyor...' : isSubmitted ? 'Gönderildi' : 'Teklif Al'}
         </button>
       </div>
       {status ? <p className="text-sm font-medium text-slate-700">{status}</p> : null}
